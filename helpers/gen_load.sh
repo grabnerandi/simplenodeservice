@@ -26,10 +26,10 @@ do
 
     sleep 2;
   else 
-    curl -s "$1/" -H "x-dynatrace-test: NA=Test.Homepage;" -o nul &> loadtest.log
-    curl -s "$1/version" -H "x-dynatrace-test: NA=Test.Version;" -o nul &> loadtest.log
-    curl -s "$1/api/echo?text=This is from a testing script" -H "x-dynatrace-test: NA=Test.Echo;" -o nul &> loadtest.log
-    curl -s "$1/api/invoke?url=http://www.dynatrace.com" -H "x-dynatrace-test: NA=Test.Invoke;" -o nul &> loadtest.log
+    curl -s "$1/" -H "x-dynatrace-test: TSN=Test.Homepage;" -o nul &> loadtest.log
+    curl -s "$1/version" -H "x-dynatrace-test: TSN=Test.Version;" -o nul &> loadtest.log
+    curl -s "$1/api/echo?text=This is from a testing script" -H "x-dynatrace-test: TSN=Test.Echo;" -o nul &> loadtest.log
+    curl -s "$1/api/invoke?url=http://www.dynatrace.com" -H "x-dynatrace-test: TSN=Test.Invoke;" -o nul &> loadtest.log
 
     sleep 5;
   fi
