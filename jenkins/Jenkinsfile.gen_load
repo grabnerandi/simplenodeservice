@@ -1,6 +1,6 @@
 pipeline {
   parameters {
-    string(name: 'ENDPOINT', defaultValue: '', description: 'The URL Endpoint of your SimpleNodeService, e.g: http://simplenode.production.10.23.23.43.xip.io', trim: true)
+    string(name: 'ENDPOINT', defaultValue: 'http://simplenodeservice.STAGE.11.22.33.44.xip.io', description: 'The URL Endpoint of your SimpleNodeService, e.g: http://simplenode.production.10.23.23.43.xip.io', trim: true)
     string(name: 'PRODUCTION', defaultValue: 'Production', description: 'Production or non Production Load', trim: true)
   }
   agent {
@@ -10,7 +10,7 @@ pipeline {
     stage('Run Test (abort job to stop)') {
       steps {
         container("curl") {
-          script {
+          sh """
             echo "Load Test Launched against $ENDPOINT - $PRODUCTION"
             while [ ! -f ./endloadtest.txt ];
             do
@@ -33,7 +33,7 @@ pipeline {
                 sleep 5;
             fi
             done;
-          }
+            """
         }
       }
     }
