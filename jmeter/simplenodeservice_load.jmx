@@ -14,7 +14,7 @@
           </elementProp>
           <elementProp name="DefaultThinkTime" elementType="Argument">
             <stringProp name="Argument.name">DefaultThinkTime</stringProp>
-            <stringProp name="Argument.value">250</stringProp>
+            <stringProp name="Argument.value">1000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="DT_LTN" elementType="Argument">
@@ -25,6 +25,11 @@
           <elementProp name="SERVER_PORT" elementType="Argument">
             <stringProp name="Argument.name">SERVER_PORT</stringProp>
             <stringProp name="Argument.value">80</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="LoopCount" elementType="Argument">
+            <stringProp name="Argument.name">LoopCount</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -127,7 +132,7 @@ hm.add(new org.apache.jmeter.protocol.http.control.Header(&quot;x-dynatrace-test
         </HTTPSamplerProxy>
         <hashTree/>
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Default Think Time" enabled="true">
-          <stringProp name="ConstantTimer.delay">{__P(ThinkTime,${DefaultThinkTime})}</stringProp>
+          <stringProp name="ConstantTimer.delay">500</stringProp>
         </ConstantTimer>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="version" enabled="true">
