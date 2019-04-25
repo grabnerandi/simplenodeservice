@@ -65,7 +65,7 @@ var init = function(newBuildNumber) {
 // ======================================================================
 // Background colors for our app depending on the build
 // ======================================================================
-var backgroundColors = ["#EEA53E", "#73A53E", "#FF0000", "#FFFF00", "#777777"]
+var backgroundColors = ["#D6D4D2", "#73A53E", "#FF7C00", "#D3D309", "#4AB9D9"]
 var getBackgroundColor = function() {
 	var buildNumberForBackgroundColor = buildNumber;
 	if(buildNumber == 0 || buildNumber > 4) buildNumberForBackgroundColor = 1;

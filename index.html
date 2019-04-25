@@ -16,30 +16,41 @@
         text-align: right;padding-top: 11em;}
       .textColumn p {width: 75%;float:right;}
       .linksColumn {position: absolute;top:0px;right: 0px;bottom: 0px;left: 50%;background-color: #33342D;}
-      h1{color: #33342D;font-size: 500%;font-weight: normal;margin-bottom: 0em;}
+      .header{color: #33342D;font-size: 500%;font-weight: normal;margin-bottom: 0em;}
       h2{font-size: 200%;font-weight: normal;margin-bottom: 0em;}
       ul {padding-left: 1em;margin: 0px;}
       li {margin: 1em 0em;}
+      * { box-sizing: border-box; }
+      .column { float: left; width: 50.00%;  padding: 5px;} 
+      .row::after {content: "";clear: both;display: table;}
+</style>
     </style>
   </head>
   <body>
     <div class="textColumn">
-      <h1>Congratulations (Build - BUILD_NUMBER)</h1>
-	  <img height="400px" src="https://github.com/Dynatrace/AWSMonitoringTutorials/raw/master/images/lab3_beanstalkloadbalanced.png" />
-      <p>This might be your first Node.JS App you ever deployed.
-	  The code base of this application was taken from the AWS Elastic Beanstalk Tutorial but was modified for the Dynatrace AWS Tutorials that you can find <a href="https://github.com/Dynatrace/AWSMonitoringTutorials"/>here!</a> and <a href="https://github.com/Dynatrace/AWSDevOpsTutorial"/>here!</a>
-    The goal of these tutorials is to enable Full Stack Monitoring and build an Unbreakable DevOps Pipeline with Dynatrace for your Application. 
-    Following is a screenshot of Dynatrace Smartcape in case you deploy this application in a scalability group:
-	  If you want to learn more about Dynatrace visit our website and get started with your own <a href="http://bit.ly/dtsaastrial">Dynatrace SaaS Trial!</a>
+      <div class="header">Congratulations (Build - BUILD_NUMBER)</div>
+      <div class="column">
+        <img src="https://keptn.sh/images/logo.svg" alt="Forest" style="width:100%">
+      </div>
+      <div class="column">
+        <img height="400px" src="https://github.com/Dynatrace/AWSMonitoringTutorials/raw/master/images/lab3_beanstalkloadbalanced.png" alt="Snow" style="width:100%">
+      </div>
+
+      This might be your first Node.JS App you ever deployed.
+	  The code base of this application was originally taken from the AWS Elastic Beanstalk Tutorial but was modified for the Cloud Native Continuous Delivery and Automated Operations Tutorials using <a href="https://keptn.sh">keptn</a> and <a href="https://www.dynatrace.com"/>Dynatrace</a>
+    The goal of these tutorials is to demo all the use cases keptn supports such as Automated Quality Gates, Multi-Stage Delivery Pipelines, Self-Healing & Resiliant Production Deployments. The Tutorial leverages Dynatrace as the Monitoring Platform.
+    Following is a screenshot of Dynatrace Smartcape showing how these services get deployed on Kubernetes:
+    Want to learn more about keptn then visit <a href="https://keptn.sh">keptn</a>
+	  Want to learn mroe about Dynatrace then start with your own <a href="http://bit.ly/dtsaastrial">Dynatrace SaaS Trial!</a>
 	  <br><br>
 	  This page is served from HOSTNAME!
-	  </p>
     </div>
+
     <div class="linksColumn">
       <h2>Lets trace some code!</h2>
 	  <div style="padding:16px;">
         Sleep Setting (in ms): <input type="textbox" id="SleepTime" value="1000"></input>
-      </div>
+    </div>
 
 	  <div style="padding:16px;">
         Say Something : <input type="textbox" id="SayText" value="Just say whatever you want"></input>
@@ -66,12 +77,18 @@
 	  
 	  <br>
 	  <br>
+      <h2>External Links: To learn more about keptn</h2>
+      <ul>
+        <li><a href="https://keptn.sh/">keptn.sh</a></li>
+        <li><a href="https://github.com/keptn/">keptn on GitHub</a></li>
+        <li><a href="https://keptn.sh/docs/">keptn docs</a></li>
+      </ul>	  
       <h2>External Links: To learn more about Dynatrace</h2>
       <ul>
-        <li><a href="https://www.dynatrace.com/technologies/cloud-and-microservices/aws-monitoring/">Dynatrace AWS Monitoring</a></li>
+        <li><a href="https://www.youtube.com/watch?v=1CbhUjqDsoY&list=PLqt2rd0eew1YFx9m8dBFSiGYSBcDuWG38&index=2&t=2s">What is Dynatrace and How to get Started</a></li>
         <li><a href="https://www.youtube.com/watch?v=CSf89W2iNJQ">5 Minute Live Demo from AWS Summit Sydney</a></li>
-        <li><a href="https://www.youtube.com/watch?v=R0bnDkM8k_o&list=PLqt2rd0eew1YFx9m8dBFSiGYSBcDuWG38&index=6&t=124s">101 AWS Monitoring with Dynatrace</a></li>
-      </ul>	  
+        <li><a href="http://bit.ly/dtsaastrial">Get your own Dynatrace SaaS Trial!e</a></li>
+      </ul>	       
 	  </div>
 	
     <script>	
