@@ -10,7 +10,7 @@ pipeline {
     string(name: 'project', defaultValue: 'keptn-sample', description: 'Your keptn project name!')
     string(name: 'stage', defaultValue: '', description: 'LEAVE BLANK - unless you want to promote an artifact into a specific stage other than the first one')
     string(name: 'service', defaultValue: 'simplenodeservice', description: 'Your keptn service name')
-    string(name: 'image', defaultValue: 'index.docker.io/grabnerandi/simplenodservice', description: 'Docker Image URL for the container to deploy')
+    string(name: 'image', defaultValue: 'index.docker.io/grabnerandi/simplenodeservice', description: 'Docker Image URL for the container to deploy')
     string(name: 'tag', defaultValue: '1.0.0', description: 'The image tag')
   }
   stages {
