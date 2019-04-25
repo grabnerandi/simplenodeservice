@@ -16,7 +16,7 @@
                     "upperSevere": 1000000,
                     "upperWarning": 800000
                 },
-                "metricScore": 100
+                "metricScore": 50
             }
         },
         {
@@ -34,7 +34,7 @@
                     "upperSevere": 10,
                     "upperWarning": 1
                 },
-                "metricScore": 100
+                "metricScore": 50
             }
         }
     ],
