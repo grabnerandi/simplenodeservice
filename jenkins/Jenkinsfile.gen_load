@@ -11,7 +11,7 @@ pipeline {
       steps {
         container("curl") {
           script {
-            echo "Load Test Launched against $ENDPOINT - $PRODUCTION "  >> ./loadtest.log
+            echo "Load Test Launched against $ENDPOINT - $PRODUCTION"
             while [ ! -f ./endloadtest.txt ];
             do
             # In Production we sleep less which means we will have more load
