@@ -1,0 +1,37 @@
+@Library('dynatrace@master') _
+
+pipeline {
+  agent {
+      label 'kubegit'
+  }
+  
+  parameters {
+    string(name: 'gitHubOrg', defaultValue: 'YOURNAME-keptn-sample', description: 'Name of your GitHub Organization keptn uses for storing configs')
+    string(name: 'project', defaultValue: 'keptn-sample', description: 'Your keptn project name!')
+    string(name: 'stage', defaultValue: '', description: 'LEAVE BLANK - unless you want to promote an artifact into a specific stage other than the first one')
+    string(name: 'service', defaultValue: 'simplenodeservice', description: 'Your keptn service name')
+    string(name: 'image', defaultValue: 'index.docker.io/grabnerandi/simplenodservice', description: 'Docker Image URL for the container to deploy')
+    string(name: 'tag', defaultValue: '1.0.0', description: 'The image tag')
+  }
+  stages {
+    stage('Send event') {
+      steps {
+        container("curl") {
+          sendCloudEvent(
+            receiver: 'event-broker.keptn.svc.cluster.local/keptn',
+            type: 'sh.keptn.events.new-artefact',
+            source: 'Jenkins', 
+            shkeptncontext: UUID.randomUUID().toString(),
+            data: [
+              [key: 'gitHubOrg', value: "${params.gitHubOrg}"],
+              [key: 'project', value: "${params.project}"],
+              [key: 'service', value: "${params.service}"],
+              [key: 'image', value: "${params.image}"],
+              [key: 'tag', value: "${params.tag}"]
+            ]
+          )
+        }
+      }
+    }
+  }
+}

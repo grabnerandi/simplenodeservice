@@ -23,7 +23,12 @@ var failInvokeRequestPercentage = 0;
 // ======================================================================
 var init = function(newBuildNumber) {
 	// CHECK IF WE ARE RUNNING "In Production"
+	// first we check if somebody set the deployment_group_name env-variable
 	inProduction = process.env.DEPLOYMENT_GROUP_NAME && process.env.DEPLOYMENT_GROUP_NAME.startsWith("Production");
+	// second we check whether our host or podname includes blue or green in its name - we use this for blue/green deployments in production
+	if(!inProduction) {
+		inProduction = os.hostname().includes("green") || os.hostname().includes("blue");
+	}
 	
 	if(inProduction) {
 		minSleep = 300; // we just simulate that production is a bit faster than staging, e.g: better hardware!
@@ -210,7 +215,7 @@ var server = http.createServer(function (req, res) {
 
 			// usage: /api/version
 			// simply returns the build number as defined in BUILD_NUMBER env-variable which is specified
-			status = "Running build number: " + buildNumber;
+			status = "Running build number: " + buildNumber + " Production-Mode: " + inProduction;
 		}
 		if(url.pathname === "/api/causeerror") {
 			log(SEVERITY_ERROR, "somebody called /api/causeerror");
