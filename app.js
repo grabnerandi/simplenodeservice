@@ -5,7 +5,8 @@ var port = process.env.PORT || 8080,
 	dttags = process.env.DT_TAGS || "<EMPTY>",
 	dtcustprops = process.env.DT_CUSTOM_PROP || "<EMPTY>",
 	dtclusterid = process.env.DT_CLUSTER_ID || "<EMPTY>",
-    html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname() + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
+	namespace = process.env.NAMESPACE || "<EMPTY>"
+    html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
 
 
 // ======================================================================
@@ -50,12 +51,12 @@ var init = function(newBuildNumber) {
 
 	switch(buildNumber) {
 		case 2:
-			failInvokeRequestPercentage = 2;
+			failInvokeRequestPercentage = 50;
 			break;
 		case 4: 
 			if(inProduction) {
 				minSleep = minSleep * 2;
-				failInvokeRequestPercentage = 10;
+				failInvokeRequestPercentage = 20;
 			}
 			break;
 		default:
@@ -64,7 +65,7 @@ var init = function(newBuildNumber) {
 			break;
 	}
 
-	console.log("Init: " + buildNumber + "/" + failInvokeRequestPercentage);
+	console.log("Init: " + buildNumber + "/" + failInvokeRequestPercentage + "/" + minSleep);
 } 
 
 // ======================================================================
@@ -162,7 +163,8 @@ var server = http.createServer(function (req, res) {
 			var returnStatusCode = 200;
 			if(failInvokeRequestPercentage > 0) {
 				invokeRequestCount++;
-				var failRequest = (invokeRequestCount % failInvokeRequestPercentage);
+				var failRequest = (invokeRequestCount % (100 / failInvokeRequestPercentage));
+				console.log(invokeRequestCount + "%" + failInvokeRequestPercentage + "=" + failRequest);
 				if(failRequest == 0) {
 					returnStatusCode = 500;
 					invokeRequestCount = 0;
@@ -234,7 +236,7 @@ var server = http.createServer(function (req, res) {
 		res.writeHead(200, 'OK', {'Content-Type': 'text/html'});
 
 		// replace buildnumber and background color
-		var finalHtml = html.replace("BACKGROUND-COLOR", getBackgroundColor()).replace("BUILD_NUMBER", buildNumber);
+		var finalHtml = html.replace("BACKGROUND-COLOR", getBackgroundColor()).replace("BUILD_NUMBER", buildNumber).replace("NAMESPACE", namespace);
         res.write(finalHtml);
         res.end();
 	}
