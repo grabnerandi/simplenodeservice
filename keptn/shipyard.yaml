@@ -1,7 +1,7 @@
 registry: simplenodeservice
 stages:
-  - name: "staging-keptnsample"
+  - name: "staging"
     deployment_strategy: "direct"
     test_strategy: "performance"
-  - name: "prod-keptnsample"
+  - name: "prod"
     deployment_strategy: "blue_green_service"
