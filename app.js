@@ -1,11 +1,18 @@
+const EMPTY = "<EMPTY>";
 var port = process.env.PORT || 8080,
     http = require('http'),
     fs = require('fs'),
 	os = require('os'),
-	dttags = process.env.DT_TAGS || "<EMPTY>",
-	dtcustprops = process.env.DT_CUSTOM_PROP || "<EMPTY>",
-	dtclusterid = process.env.DT_CLUSTER_ID || "<EMPTY>",
-	namespace = process.env.NAMESPACE || "<EMPTY>"
+	dttags = process.env.DT_TAGS || EMPTY,
+	dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
+	dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
+	namespace = process.env.NAMESPACE || EMPTY,
+	pod_name = process.env.POD_NAME || EMPTY,
+	deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
+	container_image = process.env.CONTAINER_IMAGE || EMPTY,
+	keptn_project = process.env.KEPTN_PROJECT || EMPTY,
+	keptn_stage = process.env.KEPTN_STAGE || EMPTY,
+	keptn_service = process.env.KEPTN_SERVICE || EMPTY,
     html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
 
 
@@ -23,12 +30,25 @@ var failInvokeRequestPercentage = 0;
 // does some init checks and sets variables!
 // ======================================================================
 var init = function(newBuildNumber) {
+	// MAKE SURE we have a good NAMESPACE
+	if(!namespace || (namespace.length == 0) || (namespace == EMPTY)) {
+		if(keptn_stage && keptn_stage.length)
+			namespace = keptn_stage;	
+		else if(deployment_name && deployment_name.length)
+			namespace = deployment_name;	
+		else if(keptn_stage && pod_name.length)
+			namespace = pod_name;	
+	}
+
 	// CHECK IF WE ARE RUNNING "In Production"
 	// first we check if somebody set the deployment_group_name env-variable
 	inProduction = process.env.DEPLOYMENT_GROUP_NAME && process.env.DEPLOYMENT_GROUP_NAME.startsWith("Production");
 	// second we check whether our host or podname includes blue or green in its name - we use this for blue/green deployments in production
 	if(!inProduction) {
 		inProduction = os.hostname().includes("green") || os.hostname().includes("blue");
+		if(!inProduction) {
+			inProduction = namespace && namespace.toLowerCase().includes("prod");
+		}
 	}
 	
 	if(inProduction) {
@@ -218,6 +238,17 @@ var server = http.createServer(function (req, res) {
 			// usage: /api/version
 			// simply returns the build number as defined in BUILD_NUMBER env-variable which is specified
 			status = "Running build number: " + buildNumber + " Production-Mode: " + inProduction;
+			status += "\n\nHere some additional environment variables:";
+			status += "\nKEPT_PROJECT: " + keptn_project;
+			status += "\nKEPTN_STAGE: " + keptn_stage;
+			status += "\nKEPTN_SERVICE: " + keptn_service;
+			status += "\nDT_TAGS: " + dttags;
+			status += "\nDT_CUSTOM_PROP: " + dtcustprops;
+			status += "\nDT_CLUSTER_ID: " + dtclusterid;
+			status += "\nDEPLOYMENT_NAME: " + deployment_name;
+			status += "\nCONTAINER_IMAGE: " + container_image;
+			status += "\nPOD_NAME: " + pod_name;
+			status += "\nNAMESPACE: " + namespace;
 		}
 		if(url.pathname === "/api/causeerror") {
 			log(SEVERITY_ERROR, "somebody called /api/causeerror");

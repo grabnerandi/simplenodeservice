@@ -1,0 +1,89 @@
+{
+    "spec_version": "1.0",
+    "filter" : [
+        { "key" : "project", "value" : "$PROJECT"},
+        { "key" : "stage", "value" : "$STAGE"},
+        { "key" : "service", "value" : "$SERVICE"}
+    ],
+    "compareWith" : {
+        "comment" : "this could be the option to specify a single build, e.g: last, last-pass, a range of builds, ...",
+        "type" : "last"
+    },
+    "objectives": [
+        {
+            "comment": "This is a static threshold validation for upper bounds: >=1000000 (upper severe), >=800000 (upper warning)",
+            "metric": "responseTime95",
+            "metricScore": 50,
+            "thresholds": [ 
+                {
+                    "level": "severe",
+                    "operator" : "gte",
+                    "value": 1000000
+                },
+                {
+                    "level": "warning",
+                    "operator" : "gte",
+                    "value": 800000
+                }            
+            ]
+        },
+        {
+            "comment" : "This is a funnel (upper&lower bounds) with a combination of relative and static: >=10% (upper severe), >=5% (upper warning) && <=5% (lower warning) %% <=1000 (lower severe)",
+            "metric": "responseTime99",
+            "metricScore": 50,
+            "thresholds": [ 
+                {
+                    "level": "severe",
+                    "operator" : "gte",
+                    "relative": 10
+                },
+                {
+                    "level": "warning",
+                    "operator" : "gte",
+                    "relative": 5
+                },
+                {
+                    "level": "warning",
+                    "operator" : "lte",
+                    "relative": 5
+                },
+                {
+                    "level": "severe",
+                    "operator" : "lte",
+                    "value": 1000
+                }
+            ]
+        },
+        {
+            "comment" : "This is a funnel with a combination of static, absolute and relative thresholds: >10000 (upper severe), >=5% (upper warning), <=(COMPARE-100) (lower warning), <100 (lower severe)",
+            "metric": "throughput",
+            "metricScore": 50,
+            "thresholds": [ 
+                {
+                    "level": "severe",
+                    "operator" : "gte",
+                    "value": 10000
+                },
+                {
+                    "level": "warning",
+                    "operator" : "gte",
+                    "relative": 5
+                },
+                {
+                    "level": "warning",
+                    "operator" : "lte",
+                    "absolute": -100
+                },
+                {
+                    "level": "severe",
+                    "operator" : "lte",
+                    "value": 1000
+                }
+            ]
+        }      
+    ],
+    "goals": {
+        "pass": 110,
+        "needsreview": 80
+    }
+}
