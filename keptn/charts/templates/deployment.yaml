@@ -1,0 +1,73 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplenode
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: simplenode
+  template:
+    metadata: 
+      labels:
+        app: simplenode
+    spec:
+      containers:
+      - name: simplenode
+        image: "{{ .Values.image }}"
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8080
+        env:
+        - name: DT_TAGS
+          value: "application={{ .Chart.Name }}"
+        - name: DT_CUSTOM_PROP
+          value: "keptn_project={{ .Chart.Name }} keptn_service={{ .Values.simplenodeservice.service.name }} keptn_stage=staging keptn_deployment=Direct"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.name"
+        - name: DEPLOYMENT_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.labels['deployment']"
+        - name: CONTAINER_IMAGE
+          value: "{{ .Values.image }}"
+        - name: KEPTN_PROJECT
+          value: "{{ .Chart.Name }}"
+        - name: KEPTN_STAGE
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.namespace"
+        - name: KEPTN_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.name"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 15
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi

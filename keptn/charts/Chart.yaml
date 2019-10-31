@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for simplenode
+name: simplenode
+version: 0.1.0
