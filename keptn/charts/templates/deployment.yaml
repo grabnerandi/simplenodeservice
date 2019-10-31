@@ -29,7 +29,7 @@ spec:
         - name: DT_TAGS
           value: "application={{ .Chart.Name }}"
         - name: DT_CUSTOM_PROP
-          value: "keptn_project={{ .Chart.Name }} keptn_service={{ .Values.simplenodeservice.service.name }} keptn_stage=staging keptn_deployment=Direct"
+          value: "keptn_project={{ .Chart.Name }} keptn_service={{ .Deployment.metadata.name }} keptn_stage=staging keptn_deployment=Direct"
         - name: POD_NAME
           valueFrom:
             fieldRef:
