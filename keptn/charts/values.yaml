@@ -1,3 +1,4 @@
 image: docker.io/grabnerandi/simplenodeservice:1.0.0
 keptn_project: keptn05
 keptn_stage: staging
+keptn_service: simplenode
