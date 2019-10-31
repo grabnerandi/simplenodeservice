@@ -29,7 +29,7 @@ spec:
         - name: DT_TAGS
           value: "application={{ .Chart.Name }}"
         - name: DT_CUSTOM_PROP
-          value: "keptn_project={{ .Chart.Name }} keptn_service={{ .Deployment.metadata.name }} keptn_stage=staging keptn_deployment=Direct"
+          value: "keptn_project={{ .Values.keptn_project }} keptn_service={{ .deployment.metadata.name }} keptn_stage={{ .Values.keptn_stage }} keptn_deployment=Direct release_name={{ .Release.Name }} release_namespace={{ .Release.Namespace }} release_revision={{ .Release.Revision }}"
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -41,7 +41,7 @@ spec:
         - name: CONTAINER_IMAGE
           value: "{{ .Values.image }}"
         - name: KEPTN_PROJECT
-          value: "{{ .Chart.Name }}"
+          value: "{{ .Values.keptn_project }}"
         - name: KEPTN_STAGE
           valueFrom:
             fieldRef:
