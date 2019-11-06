@@ -1,4 +1,8 @@
 --- 
+{{ $keptn_split := splitn "-" 3 .Release.Name }}
+{{ $keptn_project := $keptn_split._0}}
+{{ $keptn_stage := $keptn_split._1}}
+{{ $keptn_service := $keptn_split._2}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,9 +31,9 @@ spec:
           containerPort: 8080
         env:
         - name: DT_TAGS
-          value: "application={{ .Chart.Name }}"
+          value: "application={{ $keptn_project }} keptn_project={{ $keptn_project }} keptn_service={{ $keptn_service }} keptn_stage={{ $keptn_stage }}"
         - name: DT_CUSTOM_PROP
-          value: "keptn_project={{ .Values.keptn_project }} keptn_service={{ .Values.keptn_service }} keptn_stage={{ .Values.keptn_stage }} keptn_deployment=Direct release_name={{ .Release.Name }} release_namespace={{ .Release.Namespace }} release_revision={{ .Release.Revision }}"
+          value: "keptn_project={{ $keptn_project }} keptn_service={{ $keptn_service }} keptn_stage={{ $keptn_stage }} keptn_deployment=Direct release_name={{ .Release.Name }} release_namespace={{ .Release.Namespace }} release_revision={{ .Release.Revision }}"
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -41,15 +45,11 @@ spec:
         - name: CONTAINER_IMAGE
           value: "{{ .Values.image }}"
         - name: KEPTN_PROJECT
-          value: "{{ .Values.keptn_project }}"
+          value: "{{ $keptn_project }}"
         - name: KEPTN_STAGE
-          valueFrom:
-            fieldRef:
-              fieldPath: "metadata.namespace"
+          value: "{{ $keptn_stage }}"
         - name: KEPTN_SERVICE
-          valueFrom:
-            fieldRef:
-              fieldPath: "metadata.name"
+          value: "{{ $keptn_service }}"
         livenessProbe:
           httpGet:
             path: /
