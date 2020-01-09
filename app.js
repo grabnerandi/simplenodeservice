@@ -254,6 +254,25 @@ var server = http.createServer(function (req, res) {
 			log(SEVERITY_ERROR, "somebody called /api/causeerror");
 			status = "We just caused an error log entry"
 		}
+		if (url.pathname === "/api/cpuload") {
+			let jobCount = 0;
+			while (jobCount < 2) {
+				let count = 0;
+				let max = 0;
+				for (let i = 3; i <= 10000; i++) {
+					let isPrime = true;
+					for (let j = 2; j <= i / 2 && isPrime; j++) {
+						isPrime = i % j > 0;
+					}
+					if (isPrime) {
+						count++;
+						max = i;
+					}
+				}
+				jobCount++;
+			}
+			status = "Request finished";
+		}
 
 		// only close response handler if we are done with work!
 		if(closeResponse) {
