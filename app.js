@@ -26,8 +26,6 @@ var inProduction = false;
 var invokeRequestCount = 0;
 var failInvokeRequestPercentage = 0;
 
-let count = 0;
-const MAX_COUNT = 12;
 
 // collect request info
 var requests = [];
