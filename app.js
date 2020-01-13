@@ -26,6 +26,13 @@ var inProduction = false;
 var invokeRequestCount = 0;
 var failInvokeRequestPercentage = 0;
 
+
+// collect request info
+var requests = [];
+var requestTrimThreshold = 5000;
+var requestTrimSize = 4000;
+
+
 // ======================================================================
 // does some init checks and sets variables!
 // ======================================================================
@@ -131,10 +138,35 @@ function sleep(time) {
     }
 }
 
+function getRequestsPerMinute() {
+	var now = Date.now();
+	var aMinuteAgo = now - (1000 * 60);
+	var cnt = 0;
+	// since recent requests are at the end of the array, search the array
+	// from back to front
+	for (var i = requests.length - 1; i >= 0; i--) {
+		if (requests[i] >= aMinuteAgo) {
+			++cnt;
+		} else {
+			break;
+		}
+	}
+	return cnt
+}
+
 // ======================================================================
 // This is our main HttpServer Handler
 // ======================================================================
-var server = http.createServer(function (req, res) {
+var server = http.createServer(async function (req, res) {
+
+	requests.push(Date.now());
+
+	// now keep requests array from growing forever
+	if (requests.length > requestTrimThreshold) {
+		requests = requests.slice(0, requests.length - requestTrimSize);
+	}
+
+
     if (req.method === 'POST') {
         var body = '';
 
@@ -253,6 +285,23 @@ var server = http.createServer(function (req, res) {
 		if(url.pathname === "/api/causeerror") {
 			log(SEVERITY_ERROR, "somebody called /api/causeerror");
 			status = "We just caused an error log entry"
+		}
+		if (url.pathname === "/api/cpuload") {
+			const reqPerMin = getRequestsPerMinute();
+			let sleepTime = 1200;
+
+			if (reqPerMin <= 70) {
+				sleepTime = Math.pow(reqPerMin, 2) - Math.pow(reqPerMin, 3) / 100;
+			}
+
+			if (reqPerMin <= 45) {
+				sleepTime = (Math.pow(reqPerMin, 2) - Math.pow(reqPerMin, 3) / 100) / 2;
+			}
+
+			console.log("Sleeping for " + sleepTime + "ms");
+			sleep(sleepTime);
+
+			status = "Request finished";
 		}
 
 		// only close response handler if we are done with work!
