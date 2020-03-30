@@ -1,0 +1,73 @@
+--- 
+{{ $keptn_split := splitn "-" 3 .Release.Name }}
+{{ $keptn_project := $keptn_split._0}}
+{{ $keptn_stage := $keptn_split._1}}
+{{ $keptn_service := $keptn_split._2}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplenode
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: simplenode
+  template:
+    metadata: 
+      labels:
+        app: simplenode
+    spec:
+      containers:
+      - name: simplenode
+        image: "{{ .Values.image }}"
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8080
+        env:
+        - name: DT_TAGS
+          value: "application={{ $keptn_project }} keptn_project={{ $keptn_project }} keptn_service={{ $keptn_service }} keptn_stage={{ $keptn_stage }}"
+        - name: DT_CUSTOM_PROP
+          value: "keptn_project={{ $keptn_project }} keptn_service={{ $keptn_service }} keptn_stage={{ $keptn_stage }} keptn_deployment=Direct release_name={{ .Release.Name }} release_namespace={{ .Release.Namespace }} release_revision={{ .Release.Revision }}"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.name"
+        - name: DEPLOYMENT_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.labels['deployment']"
+        - name: CONTAINER_IMAGE
+          value: "{{ .Values.image }}"
+        - name: KEPTN_PROJECT
+          value: "{{ $keptn_project }}"
+        - name: KEPTN_STAGE
+          value: "{{ $keptn_stage }}"
+        - name: KEPTN_SERVICE
+          value: "{{ $keptn_service }}"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 15
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
