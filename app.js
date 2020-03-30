@@ -1,11 +1,18 @@
+const EMPTY = "<EMPTY>";
 var port = process.env.PORT || 8080,
     http = require('http'),
     fs = require('fs'),
 	os = require('os'),
-	dttags = process.env.DT_TAGS || "<EMPTY>",
-	dtcustprops = process.env.DT_CUSTOM_PROP || "<EMPTY>",
-	dtclusterid = process.env.DT_CLUSTER_ID || "<EMPTY>",
-	namespace = process.env.NAMESPACE || "<EMPTY>"
+	dttags = process.env.DT_TAGS || EMPTY,
+	dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
+	dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
+	namespace = process.env.NAMESPACE || EMPTY,
+	pod_name = process.env.POD_NAME || EMPTY,
+	deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
+	container_image = process.env.CONTAINER_IMAGE || EMPTY,
+	keptn_project = process.env.KEPTN_PROJECT || EMPTY,
+	keptn_stage = process.env.KEPTN_STAGE || EMPTY,
+	keptn_service = process.env.KEPTN_SERVICE || EMPTY,
     html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
 
 
@@ -19,16 +26,36 @@ var inProduction = false;
 var invokeRequestCount = 0;
 var failInvokeRequestPercentage = 0;
 
+
+// collect request info
+var requests = [];
+var requestTrimThreshold = 5000;
+var requestTrimSize = 4000;
+
+
 // ======================================================================
 // does some init checks and sets variables!
 // ======================================================================
 var init = function(newBuildNumber) {
+	// MAKE SURE we have a good NAMESPACE
+	if(!namespace || (namespace.length == 0) || (namespace == EMPTY)) {
+		if(keptn_stage && keptn_stage.length)
+			namespace = keptn_stage;	
+		else if(deployment_name && deployment_name.length)
+			namespace = deployment_name;	
+		else if(keptn_stage && pod_name.length)
+			namespace = pod_name;	
+	}
+
 	// CHECK IF WE ARE RUNNING "In Production"
 	// first we check if somebody set the deployment_group_name env-variable
 	inProduction = process.env.DEPLOYMENT_GROUP_NAME && process.env.DEPLOYMENT_GROUP_NAME.startsWith("Production");
 	// second we check whether our host or podname includes blue or green in its name - we use this for blue/green deployments in production
 	if(!inProduction) {
 		inProduction = os.hostname().includes("green") || os.hostname().includes("blue");
+		if(!inProduction) {
+			inProduction = namespace && namespace.toLowerCase().includes("prod");
+		}
 	}
 	
 	if(inProduction) {
@@ -111,10 +138,35 @@ function sleep(time) {
     }
 }
 
+function getRequestsPerMinute() {
+	var now = Date.now();
+	var aMinuteAgo = now - (1000 * 60);
+	var cnt = 0;
+	// since recent requests are at the end of the array, search the array
+	// from back to front
+	for (var i = requests.length - 1; i >= 0; i--) {
+		if (requests[i] >= aMinuteAgo) {
+			++cnt;
+		} else {
+			break;
+		}
+	}
+	return cnt
+}
+
 // ======================================================================
 // This is our main HttpServer Handler
 // ======================================================================
-var server = http.createServer(function (req, res) {
+var server = http.createServer(async function (req, res) {
+
+	requests.push(Date.now());
+
+	// now keep requests array from growing forever
+	if (requests.length > requestTrimThreshold) {
+		requests = requests.slice(0, requests.length - requestTrimSize);
+	}
+
+
     if (req.method === 'POST') {
         var body = '';
 
@@ -218,10 +270,38 @@ var server = http.createServer(function (req, res) {
 			// usage: /api/version
 			// simply returns the build number as defined in BUILD_NUMBER env-variable which is specified
 			status = "Running build number: " + buildNumber + " Production-Mode: " + inProduction;
+			status += "\n\nHere some additional environment variables:";
+			status += "\nKEPT_PROJECT: " + keptn_project;
+			status += "\nKEPTN_STAGE: " + keptn_stage;
+			status += "\nKEPTN_SERVICE: " + keptn_service;
+			status += "\nDT_TAGS: " + dttags;
+			status += "\nDT_CUSTOM_PROP: " + dtcustprops;
+			status += "\nDT_CLUSTER_ID: " + dtclusterid;
+			status += "\nDEPLOYMENT_NAME: " + deployment_name;
+			status += "\nCONTAINER_IMAGE: " + container_image;
+			status += "\nPOD_NAME: " + pod_name;
+			status += "\nNAMESPACE: " + namespace;
 		}
 		if(url.pathname === "/api/causeerror") {
 			log(SEVERITY_ERROR, "somebody called /api/causeerror");
 			status = "We just caused an error log entry"
+		}
+		if (url.pathname === "/api/cpuload") {
+			const reqPerMin = getRequestsPerMinute();
+			let sleepTime = 1200;
+
+			if (reqPerMin <= 70) {
+				sleepTime = Math.pow(reqPerMin, 2) - Math.pow(reqPerMin, 3) / 100;
+			}
+
+			if (reqPerMin <= 45) {
+				sleepTime = (Math.pow(reqPerMin, 2) - Math.pow(reqPerMin, 3) / 100) / 2;
+			}
+
+			console.log("Sleeping for " + sleepTime + "ms");
+			sleep(sleepTime);
+
+			status = "Request finished";
 		}
 
 		// only close response handler if we are done with work!

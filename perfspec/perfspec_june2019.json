@@ -1,0 +1,120 @@
+{
+    "spec_version": "1.0",
+    "indicators": [
+        {
+            "id": "ResponseTime_Service",
+            "comment" : "Just look at 90th Percentile of Response Time and compare it with a static threshold",
+            "source": "Dynatrace",
+            "query": {
+                "timeseriesId": "com.dynatrace.builtin:service.responsetime",
+                "aggregation": "p90",
+                "startTimestamp": "",
+                "endTimestamp": "",
+                "tags" : ""
+            },
+            "grading": {
+                "type": "Threshold",
+                "thresholds": {
+                    "upperSevere": 1000000,
+                    "upperWarning": 800000
+                },
+                "metricScore": 50
+            }
+        },
+        {
+            "id": "ResponseTime_AllKeyRequests",
+            "source": "Dynatrace",
+            "query": {
+                "comment" : "Queries p90,p95,p99 of all key requests",
+                "timeseriesId": "builtin:service.keyrequests.*",
+                "aggregation": ["p90","p95","p99"]
+            },
+            "grading": {
+                "type": "BasicCompare",
+                "basiccompare": {
+                    "comment" : "Compares with previous good passed build. Comparison is done based on percente change to upper and lower ranges",
+                    "upperSeverePerc": 5,
+                    "upperWarningPerc" : 3,
+                    "lowerSeverePerc": 10,
+                    "compareWith" : "lastpass"
+                },
+                "metricScore": 50
+            }
+        },
+        {
+            "id": "ResponseTime_TestedEndpoints",
+            "source": "Dynatrace",
+            "query": {
+                "comment" : "Validates Top 10 Endpoints that have been tagged by our testing tools",
+                "servicemetric": "responsetime_tested_endpoints",
+                "sourcemetric" : "Response Time",
+                "splitby" : {
+                    "dimensionname" : "TestName",
+                    "dimensionvalue" : "{RequestAttribute:TSN}",
+                    "top" : 10,
+                    "sorting" : "asc",
+                    "aggregation" : "avg"
+                },
+                "filter" : {
+                    "filterfield" : "Request attribute",
+                    "filtervalue" : "TSN",
+                    "evaluation" : "exists"
+                }
+            },
+            "grading": {
+                "type": "BaselineCompare",
+                "basiccompare": {
+                    "comment" : "Builds a baseline across the last 5 builds that passed",
+                    "baselineRuns" : 5,
+                    "warningDeviation" : 10,
+                    "includeRunStatus" : "pass"
+                },
+                "metricScore": 50
+            }
+        },
+        {
+            "id": "Throughput_Service",
+            "source": "Dynatrace",
+            "query": {
+                "timeseriesId": "com.dynatrace.builtin:service.requests",
+                "aggregation": "count"
+            },
+            "grading": {
+                "metricType": "info"
+            }
+        },                 
+        {
+            "id": "FailureRate_Service",
+            "source": "Dynatrace",
+            "query": {
+                "timeseriesId": "com.dynatrace.builtin:service.failurerate",
+                "aggregation": "AVG"
+            },
+            "grading": {
+                "type": "Threshold",
+                "thresholds": {
+                    "upperSevere": 10
+                },
+                "metricType" : "passfail"
+            }
+        },
+        {
+            "id": "Problems",
+            "source": "Dynatrace",
+            "query": {
+                "problemtypes": "error,responsetime"
+            },
+            "grading": {
+                "type": "Threshold",
+                "thresholds": {
+                    "upperSevere": 1
+                },
+                "metricType" : "passfail"
+            }
+        }       
+    ],
+    "objectives": {
+        "pass": 90,
+        "needsreview": 75
+    }
+}
