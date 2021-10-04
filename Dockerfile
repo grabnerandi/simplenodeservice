@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:15
 
 ARG BUILD_NUMBER=1
 ENV BUILD_NUMBER=$BUILD_NUMBER
@@ -12,6 +12,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install
+
+RUN apt-get update -y
+RUN apt-get install -y ca-certificates
 # If you are building your code for production
 # RUN npm ci --only=production
 

@@ -8,5 +8,5 @@ then
   exit 1
 fi
 
-docker build --build-arg BUILD_NUMBER=$2 -t $1:$2.0.0 .
-docker push $1:$2.0.0
+docker build --build-arg BUILD_NUMBER=$2 -t $1:$2.0.1 .
+docker push $1:$2.0.1
