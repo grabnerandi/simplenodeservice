@@ -206,7 +206,7 @@ var server = http.createServer(async function (req, res) {
 		sleep(sleeptime);
 
 		// figure out which API call they want to execute
-        var status = "Unkown API Call";
+        var status = "Unknown API Call";
 		if(url.pathname === "/api/sleeptime") {
 			// Usage: /api/sleeptime?min=1234 
 			var sleepValue = parseInt(url.query["min"]);
