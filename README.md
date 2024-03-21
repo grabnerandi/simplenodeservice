@@ -42,3 +42,13 @@ There are different options on how to run / deploy that app
 
 You can build the app yourself and also use the buildpush.sh for building the container and pushing it to your own container registry!
 
+## OpenFeature Support
+
+This demo uses OpenFeature + flagd to retrieve the background colour of the app.
+
+This will work with both the [OpenFeature Operator](https://github.com/open-feature/open-feature-operator/tree/main/docs) and a standalone instance of [flagd](https://flagd.dev).
+
+The app will default to looking for flagd on `127.0.0.1` on port `8013` but this can be configured by setting environment variables: `FEATURE_FLAG_HOST` and `FEATURE_FLAG_PORT` respectively.
+
+When using the Operator on k8s, flagd will be available as a sidecar on `localhost:8013` so no environment variables should be necessary. 
+
