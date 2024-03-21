@@ -5,22 +5,24 @@ const EMPTY = "<EMPTY>";
 var port = process.env.PORT || 8080,
     http = require('http'),
     fs = require('fs'),
-	os = require('os'),
-	dttags = process.env.DT_TAGS || EMPTY,
-	dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
-	dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
-	namespace = process.env.NAMESPACE || EMPTY,
-	pod_name = process.env.POD_NAME || EMPTY,
-	deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
-	container_image = process.env.CONTAINER_IMAGE || EMPTY,
-	keptn_project = process.env.KEPTN_PROJECT || EMPTY,
-	keptn_stage = process.env.KEPTN_STAGE || EMPTY,
-	keptn_service = process.env.KEPTN_SERVICE || EMPTY,
-    html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
+    os = require('os'),
+    dttags = process.env.DT_TAGS || EMPTY,
+    dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
+    dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
+    namespace = process.env.NAMESPACE || EMPTY,
+    pod_name = process.env.POD_NAME || EMPTY,
+    deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
+    container_image = process.env.CONTAINER_IMAGE || EMPTY,
+    keptn_project = process.env.KEPTN_PROJECT || EMPTY,
+    keptn_stage = process.env.KEPTN_STAGE || EMPTY,
+    keptn_service = process.env.KEPTN_SERVICE || EMPTY,
+    html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()), //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
+    flagd_host = process.env.FEATURE_FLAG_HOST || "127.0.0.1",
+    flagd_port = process.env.FEATURE_FLAG_PORT || 8013;
 
 // OpenFeature Initialisation Code
 // Register your feature flag provider
-OpenFeature.setProvider(new FlagdProvider());
+OpenFeature.setProvider(new FlagdProvider({host: flagd_host, port: flagd_port}));
 // create a new client
 const client = OpenFeature.getClient();
 
