@@ -1,3 +1,6 @@
+var {OpenFeature} = require("@openfeature/server-sdk")
+var {FlagdProvider} = require("@openfeature/flagd-provider")
+
 const EMPTY = "<EMPTY>";
 var port = process.env.PORT || 8080,
     http = require('http'),
@@ -15,6 +18,11 @@ var port = process.env.PORT || 8080,
 	keptn_service = process.env.KEPTN_SERVICE || EMPTY,
     html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
 
+// OpenFeature Initialisation Code
+// Register your feature flag provider
+OpenFeature.setProvider(new FlagdProvider());
+// create a new client
+const client = OpenFeature.getClient();
 
 // ======================================================================
 // Here are some global config entries that change the behavior of the app
@@ -98,14 +106,19 @@ var init = function(newBuildNumber) {
 // ======================================================================
 // Background colors for our app depending on the build
 // ======================================================================
-var backgroundColors = ["#D6D4D2", "#73A53E", "#FF7C00", "#D3D309", "#4AB9D9"]
-var getBackgroundColor = function() {
-	var buildNumberForBackgroundColor = buildNumber;
-	if(buildNumber == 0 || buildNumber > 4) buildNumberForBackgroundColor = 1;
-	
-	return backgroundColors[buildNumberForBackgroundColor];
-}
 
+// ======================================================================
+// Background colors for our app depending on the build
+// If feature flag backend is down. Default backgroundColor = #FFFFFF
+// If feature flag backend is up. Default backgroundColor = #D6D4D2 (see flags.json)
+// ======================================================================
+var getBackgroundColor = async function() {
+	
+	const backgroundColor = await client.getStringValue("bg-color", "#FFFFFF", { "buildNumber": buildNumber });
+	console.log("Background Color: " + backgroundColor + " for build number: " + buildNumber);
+	
+	return backgroundColor;
+}
 
 // ======================================================================
 // This is for logging
