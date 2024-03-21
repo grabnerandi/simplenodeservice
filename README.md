@@ -54,6 +54,4 @@ This will work in the following configurations:
 
 The app will default to looking for flagd on `127.0.0.1` on port `8013` but this can be configured by setting environment variables: `FEATURE_FLAG_HOST` and `FEATURE_FLAG_PORT` respectively.
 
-When using the Operator on k8s, flagd will be available as a sidecar on `localhost:8013` so no environment variables should be necessary. 
-
-test...
+When using the Operator on k8s, flagd will be available as a sidecar on `localhost:8013` so no environment variables should be necessary.
