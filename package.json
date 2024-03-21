@@ -7,6 +7,7 @@
     "@openfeature/server-sdk": "^1.13.2"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "set FLAGD_RESOLVER=in-process&&set FLAGD_OFFLINE_FLAG_SOURCE_PATH=flags.json&&node app.js"
   }
 }
