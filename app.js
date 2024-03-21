@@ -325,7 +325,8 @@ var server = http.createServer(async function (req, res) {
 		res.writeHead(200, 'OK', {'Content-Type': 'text/html'});
 
 		// replace buildnumber and background color
-		var finalHtml = html.replace("BACKGROUND-COLOR", getBackgroundColor()).replace("BUILD_NUMBER", buildNumber).replace("NAMESPACE", namespace);
+		bgColor = await getBackgroundColor()
+		var finalHtml = html.replace("BACKGROUND-COLOR", bgColor).replace("BUILD_NUMBER", buildNumber).replace("NAMESPACE", namespace);
         res.write(finalHtml);
         res.end();
 	}
