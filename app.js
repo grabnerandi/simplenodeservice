@@ -107,10 +107,6 @@ var init = function(newBuildNumber) {
 
 // ======================================================================
 // Background colors for our app depending on the build
-// ======================================================================
-
-// ======================================================================
-// Background colors for our app depending on the build
 // If feature flag backend is down. Default backgroundColor = #FFFFFF
 // If feature flag backend is up. Default backgroundColor = #D6D4D2 (see flags.json)
 // ======================================================================
