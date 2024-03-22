@@ -4,11 +4,11 @@
       "bg-color": {
         "state": "ENABLED",
         "variants": {
-          "#D6D4D2": "#D6D4D2",
-          "#73A53E": "#73A53E",
-          "#FF7C00": "#FF7C00",
-          "#D3D309": "#D3D309",
-          "#4AB9D9": "#4AB9D9"
+          "white": "#D6D4D2",
+          "green": "#73A53E",
+          "orange": "#FF7C00",
+          "lime": "#D3D309",
+          "blue": "#4AB9D9"
         },
         "defaultVariant": "#D6D4D2",
         "targeting": {
@@ -21,7 +21,7 @@
                 0
               ]
             },
-            "#73A53E",
+            "white",
             {
               "if": [
                 {
@@ -32,7 +32,7 @@
                     1
                   ]
                 },
-                "#73A53E",
+                "green",
                 {
                   "if": [
                     {
@@ -43,7 +43,7 @@
                         2
                       ]
                     },
-                    "#FF7C00",
+                    "orange",
                     {
                       "if": [
                         {
@@ -54,7 +54,7 @@
                             3
                           ]
                         },
-                        "#D3D309",
+                        "lime",
                         {
                           "if": [
                             {
@@ -65,7 +65,7 @@
                                 4
                               ]
                             },
-                            "#4AB9D9"
+                            "blue"
                           ]
                         }
                       ]
