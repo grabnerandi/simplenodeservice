@@ -48,7 +48,7 @@ This demo uses OpenFeature + flagd to retrieve the background colour of the app.
 
 This will work in the following configurations:
 
-- `npm run dev` will directly read `flags.json`. No additional flagd instance required. This is the recommended (and easiet)
+- `npm run dev_linux` or `npm run dev_windows` (choose depending on your OS) will directly read `flags.json` from disk. No additional flagd instance required. This is the recommended (and easiet)
 - A standalone instance of flagd (`set FLAGD_RESOLVER=rpc` and `set FLAGD_ 
 - The [OpenFeature Operator](https://github.com/open-feature/open-feature-operator/tree/main/docs), a standalone instance of [flagd](https://flagd.dev).
 
