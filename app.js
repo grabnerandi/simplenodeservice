@@ -1,20 +1,28 @@
+var {OpenFeature} = require("@openfeature/server-sdk")
+var {FlagdProvider} = require("@openfeature/flagd-provider")
+
 const EMPTY = "<EMPTY>";
 var port = process.env.PORT || 8080,
     http = require('http'),
     fs = require('fs'),
-	os = require('os'),
-	dttags = process.env.DT_TAGS || EMPTY,
-	dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
-	dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
-	namespace = process.env.NAMESPACE || EMPTY,
-	pod_name = process.env.POD_NAME || EMPTY,
-	deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
-	container_image = process.env.CONTAINER_IMAGE || EMPTY,
-	keptn_project = process.env.KEPTN_PROJECT || EMPTY,
-	keptn_stage = process.env.KEPTN_STAGE || EMPTY,
-	keptn_service = process.env.KEPTN_SERVICE || EMPTY,
+    os = require('os'),
+    dttags = process.env.DT_TAGS || EMPTY,
+    dtcustprops = process.env.DT_CUSTOM_PROP || EMPTY,
+    dtclusterid = process.env.DT_CLUSTER_ID || EMPTY,
+    namespace = process.env.NAMESPACE || EMPTY,
+    pod_name = process.env.POD_NAME || EMPTY,
+    deployment_name = process.env.DEPLOYMENT_NAME || EMPTY,
+    container_image = process.env.CONTAINER_IMAGE || EMPTY,
+    keptn_project = process.env.KEPTN_PROJECT || EMPTY,
+    keptn_stage = process.env.KEPTN_STAGE || EMPTY,
+    keptn_service = process.env.KEPTN_SERVICE || EMPTY,
     html = fs.readFileSync('index.html').toString().replace("HOSTNAME", os.hostname()); //  + " with DT_TAGS=" + dttags + "\nDT_CUSTOM_PROP=" + dtcustprops + "\nDT_CLUSTER_ID=" + dtclusterid);
 
+// OpenFeature Initialisation Code
+// Register your feature flag provider
+OpenFeature.setProvider(new FlagdProvider());
+// create a new client
+const client = OpenFeature.getClient();
 
 // ======================================================================
 // Here are some global config entries that change the behavior of the app
@@ -97,15 +105,16 @@ var init = function(newBuildNumber) {
 
 // ======================================================================
 // Background colors for our app depending on the build
+// If feature flag backend is down. Default backgroundColor = #FFFFFF
+// If feature flag backend is up. Default backgroundColor = #D6D4D2 (see flags.json)
 // ======================================================================
-var backgroundColors = ["#D6D4D2", "#73A53E", "#FF7C00", "#D3D309", "#4AB9D9"]
-var getBackgroundColor = function() {
-	var buildNumberForBackgroundColor = buildNumber;
-	if(buildNumber == 0 || buildNumber > 4) buildNumberForBackgroundColor = 1;
+var getBackgroundColor = async function() {
 	
-	return backgroundColors[buildNumberForBackgroundColor];
+	const backgroundColor = await client.getStringValue("bg-color", "#FFFFFF", { "buildNumber": buildNumber });
+	console.log("Background Color: " + backgroundColor + " for build number: " + buildNumber);
+	
+	return backgroundColor;
 }
-
 
 // ======================================================================
 // This is for logging
@@ -195,7 +204,7 @@ var server = http.createServer(async function (req, res) {
 		sleep(sleeptime);
 
 		// figure out which API call they want to execute
-        var status = "Unkown API Call";
+        var status = "Unknown API Call";
 		if(url.pathname === "/api/sleeptime") {
 			// Usage: /api/sleeptime?min=1234 
 			var sleepValue = parseInt(url.query["min"]);
@@ -271,7 +280,7 @@ var server = http.createServer(async function (req, res) {
 			// simply returns the build number as defined in BUILD_NUMBER env-variable which is specified
 			status = "Running build number: " + buildNumber + " Production-Mode: " + inProduction;
 			status += "\n\nHere some additional environment variables:";
-			status += "\nKEPT_PROJECT: " + keptn_project;
+			status += "\nKEPTN_PROJECT: " + keptn_project;
 			status += "\nKEPTN_STAGE: " + keptn_stage;
 			status += "\nKEPTN_SERVICE: " + keptn_service;
 			status += "\nDT_TAGS: " + dttags;
@@ -316,7 +325,8 @@ var server = http.createServer(async function (req, res) {
 		res.writeHead(200, 'OK', {'Content-Type': 'text/html'});
 
 		// replace buildnumber and background color
-		var finalHtml = html.replace("BACKGROUND-COLOR", getBackgroundColor()).replace("BUILD_NUMBER", buildNumber).replace("NAMESPACE", namespace);
+		bgColor = await getBackgroundColor()
+		var finalHtml = html.replace("BACKGROUND-COLOR", bgColor).replace("BUILD_NUMBER", buildNumber).replace("NAMESPACE", namespace);
         res.write(finalHtml);
         res.end();
 	}

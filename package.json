@@ -1,9 +1,14 @@
 {
   "name": "SimpleNodeJsService",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@openfeature/flagd-provider": "^0.12.0",
+    "@openfeature/server-sdk": "^1.13.2"
+  },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev_linux": "export FLAGD_RESOLVER=in-process && export FLAGD_OFFLINE_FLAG_SOURCE_PATH=flags.json && node app.js",
+    "dev_windows": "set FLAGD_RESOLVER=in-process&&FLAGD_OFFLINE_FLAG_SOURCE_PATH=flags.json&&node app.js"
   }
 }

@@ -1,0 +1,81 @@
+{
+    "$schema": "https://flagd.dev/schema/v0/flags.json",
+    "flags": {
+      "bg-color": {
+        "state": "ENABLED",
+        "variants": {
+          "white": "#D6D4D2",
+          "green": "#73A53E",
+          "orange": "#FF7C00",
+          "lime": "#D3D309",
+          "blue": "#4AB9D9"
+        },
+        "defaultVariant": "white",
+        "targeting": {
+          "if": [
+            {
+              "==": [
+                {
+                  "var": "buildNumber"
+                },
+                0
+              ]
+            },
+            "white",
+            {
+              "if": [
+                {
+                  "==": [
+                    {
+                      "var": "buildNumber"
+                    },
+                    1
+                  ]
+                },
+                "green",
+                {
+                  "if": [
+                    {
+                      "==": [
+                        {
+                          "var": "buildNumber"
+                        },
+                        2
+                      ]
+                    },
+                    "orange",
+                    {
+                      "if": [
+                        {
+                          "==": [
+                            {
+                              "var": "buildNumber"
+                            },
+                            3
+                          ]
+                        },
+                        "lime",
+                        {
+                          "if": [
+                            {
+                              ">=": [
+                                {
+                                  "var": "buildNumber"
+                                },
+                                4
+                              ]
+                            },
+                            "blue"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+}
