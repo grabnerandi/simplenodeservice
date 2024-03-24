@@ -10,7 +10,7 @@
           "lime": "#D3D309",
           "blue": "#4AB9D9"
         },
-        "defaultVariant": "#D6D4D2",
+        "defaultVariant": "white",
         "targeting": {
           "if": [
             {
